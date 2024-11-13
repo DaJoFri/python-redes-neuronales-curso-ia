@@ -1,0 +1,60 @@
+import numpy as np
+
+# Función de activación (por ejemplo, una función escalón)
+def activation_function(x):
+    return 1 if x >= 0 else 0
+
+# Parámetros
+learning_rate = 0.1  # coeficiente de aprendizaje
+epochs = 100         # número máximo de iteraciones
+
+# Inicializar pesos y umbral
+def initialize_weights(n_features):
+    weights = np.random.uniform(-1, 1, n_features)
+    threshold = np.random.uniform(-1, 1)
+    return weights, threshold
+
+# Algoritmo de entrenamiento
+def train_perceptron(X, D):
+    n_samples, n_features = X.shape
+    weights, threshold = initialize_weights(n_features)
+    
+    for epoch in range(epochs):
+        total_error = 0
+        for i in range(n_samples):
+            # Paso 3: Calcular y (propagación)
+            weighted_sum = np.dot(X[i], weights) - threshold
+            y = activation_function(weighted_sum)
+            
+            # Paso 4: Calcular el error
+            error = D[i] - y
+            total_error += abs(error)
+            
+            # Paso 5: Ajustar los pesos y el umbral
+            weights += learning_rate * error * X[i]
+            threshold -= learning_rate * error
+            
+        # Mostrar el error total en cada época
+        print(f"Época {epoch + 1}, Error total: {total_error}")
+        
+        # Si el error total es cero, detener el entrenamiento
+        if total_error == 0:
+            break
+    
+    return weights, threshold
+
+# Ejemplo de datos de entrada y salidas esperadas
+# X son las entradas (matriz de características) y D las salidas deseadas
+X = np.array([
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1]
+])
+D = np.array([0, 0, 0, 1])  # ejemplo para AND
+
+# Entrenar el perceptrón
+weights, threshold = train_perceptron(X, D)
+
+print("Pesos finales:", weights)
+print("Umbral final:", threshold)
